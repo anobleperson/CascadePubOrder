@@ -88,6 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'Size', options: ['Small', 'Large'] },
             ],
             description: 'Served on creamy mash with a rich gravy'
+        },
+        'Custom Order': {
+            type: 'custom',
+            description: 'Special requests or custom meals',
+            placeholder: 'E.g., Gluten-free pasta, No onions, Extra spicy...'
         }
     };
     const orders = {};
@@ -138,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             
             mealCard.addEventListener('click', () => {
-                if (meal.type === 'multi') {
+                if (meal.type === 'multi' || meal.type === 'custom') {
                     showCustomizationModal(mealName, meal);
                 } else {
                     addOrder(mealName, meal);
@@ -183,66 +188,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showCustomizationModal(mealName, meal) {
-        const modal = document.getElementById('customization-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const optionsContainer = document.getElementById('customization-options');
-        const confirmBtn = document.getElementById('confirm-customization');
-        const cancelBtn = document.getElementById('cancel-customization');
-
-        modalTitle.textContent = `Customize ${mealName}`;
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.style.display = 'flex';
         
-        // Clear previous options
-        optionsContainer.innerHTML = '';
-
-        // Create option groups
-        meal.variations.forEach(variation => {
-            const optionGroup = document.createElement('div');
-            optionGroup.className = 'option-group';
-            
-            const label = document.createElement('label');
-            label.textContent = variation.name;
-            optionGroup.appendChild(label);
-
-            const select = document.createElement('select');
-            select.name = variation.name;
-            variation.options.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = option;
-                opt.textContent = option;
-                select.appendChild(opt);
-            });
-            optionGroup.appendChild(select);
-            
-            optionsContainer.appendChild(optionGroup);
-        });
-
-        // Show modal
-        modal.style.display = 'block';
-
-        // Handle confirmation
-        confirmBtn.onclick = () => {
-            const selectedVariations = {};
-            optionsContainer.querySelectorAll('select').forEach(select => {
-                selectedVariations[select.name] = select.value;
-            });
-            addOrder(mealName, meal, selectedVariations);
-            hideModal();
-        };
-
-        // Handle cancellation
-        cancelBtn.onclick = () => hideModal();
-
-        // Close modal when clicking outside
-        modal.onclick = (e) => {
-            if (e.target === modal) {
-                hideModal();
+        let modalContent = '';
+        
+        if (meal.type === 'custom') {
+            // Custom order modal
+            modalContent = `
+                <div class="custom-order-modal">
+                    <h3>${mealName}</h3>
+                    <p>${meal.description}</p>
+                    <textarea id="custom-order-text" placeholder="${meal.placeholder || 'Enter your custom order details...'}" rows="4"></textarea>
+                    <div class="modal-buttons">
+                        <button id="cancel-customization">Cancel</button>
+                        <button id="add-to-order" class="primary">Add Custom Order</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Standard meal with variations
+            let variationsHtml = '';
+            if (meal.variations && meal.variations.length > 0) {
+                meal.variations.forEach((variation, index) => {
+                    variationsHtml += `
+                        <div class="variation">
+                            <label>${variation.name}:</label>
+                            <select id="variation-${index}">
+                                ${variation.options.map(option => 
+                                    `<option value="${option}">${option}</option>`
+                                ).join('')}
+                            </select>
+                        </div>`;
+                });
             }
-        };
-    }
-
-    function hideModal() {
-        const modal = document.getElementById('customization-modal');
-        modal.style.display = 'none';
+            
+            modalContent = `
+                <div class="meal-modal">
+                    <h3>${mealName}</h3>
+                    <p>${meal.description}</p>
+                    ${variationsHtml}
+                    <div class="modal-buttons">
+                        <button id="cancel-customization">Cancel</button>
+                        <button id="add-to-order" class="primary">Add to Order</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        modal.innerHTML = `
+            <div class="modal-content">
+                ${modalContent}
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Focus the first input field
+        const firstInput = modal.querySelector('textarea, select, input');
+        if (firstInput) firstInput.focus();
+        
+        // Add event listeners
+        modal.querySelector('#add-to-order').addEventListener('click', () => {
+            if (meal.type === 'custom') {
+                const customText = modal.querySelector('#custom-order-text').value.trim();
+                if (customText) {
+                    addOrder(`Custom Order: ${customText}`, { 
+                        type: 'custom',
+                        description: customText
+                    });
+                    modal.remove();
+                } else {
+                    alert('Please enter your custom order details');
+                }
+            } else {
+                const variations = {};
+                if (meal.variations) {
+                    meal.variations.forEach((variation, index) => {
+                        const element = modal.querySelector(`#variation-${index}`);
+                        if (element) {
+                            variations[variation.name] = element.value;
+                        }
+                    });
+                }
+                addOrder(mealName, meal, variations);
+                modal.remove();
+            }
+        });
+        
+        modal.querySelector('#cancel-customization').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
     }
 
     function renderOrders() {
