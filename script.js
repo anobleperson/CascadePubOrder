@@ -2,13 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const meals = {
         'Chicken Burger': {
             type: 'single',
-            price: 15.99,
             variations: [],
             description: 'Classic chicken burger with lettuce, tomato, and mayo'
         },
         'Snitzel': {
             type: 'multi',
-            price: 18.99,
             variations: [
                 { name: 'Type', options: ['Chicken', 'Beef'] },
                 { name: 'Size', options: ['Small', 'Large'] },
@@ -19,13 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'Fish and Chips': {
             type: 'single',
-            price: 16.99,
             variations: [],
             description: 'Battered fish with crispy chips'
         },
         'Beef Burger': {
             type: 'single',
-            price: 17.99,
             variations: [],
             description: 'Juicy beef burger with cheese, lettuce, tomato, and mayo'
         }
@@ -42,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mealCard.innerHTML = `
                 <h3>${mealName}</h3>
                 <p>${meal.description}</p>
-                <p class="price">$${meal.price.toFixed(2)}</p>
                 ${meal.type === 'multi' ? '<p>Customizable options available</p>' : ''}
             `;
             
