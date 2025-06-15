@@ -28,6 +28,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const orders = {};
 
+    function formatOrdersForCopy() {
+        let text = 'Meal Orders:\n\n';
+        
+        Object.values(orders).forEach(order => {
+            let orderText = `${order.mealName} x${order.count}`;
+            if (Object.keys(order.variations).length > 0) {
+                orderText += ' (' + Object.entries(order.variations)
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join(', ') + ')';
+            }
+            text += `${orderText}\n`;
+        });
+
+        return text;
+    }
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        // Trigger reflow to apply initial styles
+        toast.offsetHeight;
+        
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2000);
+    }
+
     function renderMeals() {
         const mealsContainer = document.querySelector('.meals');
         mealsContainer.innerHTML = '';
@@ -223,5 +256,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initialize the meal list
+    // Initialize the app
     renderMeals();
+
+    // Add copy orders functionality
+    const copyBtn = document.getElementById('copy-orders');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            if (Object.keys(orders).length === 0) {
+                showToast('No orders to copy');
+                return;
+            }
+            
+            const formattedOrders = formatOrdersForCopy();
+            navigator.clipboard.writeText(formattedOrders)
+                .then(() => showToast('Orders copied to clipboard!'))
+                .catch(err => {
+                    console.error('Failed to copy orders:', err);
+                    showToast('Failed to copy orders');
+                });
+        });
+    }
 });

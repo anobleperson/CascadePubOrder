@@ -38,11 +38,13 @@ h1 {
 }
 
 .order-list {
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
     padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #333;
+    backdrop-filter: blur(8px);
 }
 
 .meal-list h2, .order-list h2 {
@@ -201,12 +203,6 @@ h1 {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
-
-.order-item .quantity-controls {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
 }
 
 button {
