@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cascades Pub Meal Orders</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cascades Pub Meal Orders</h1>
+        
+        <div class="meal-selector">
+            <div class="meal-list">
+                <h2>Select a Meal</h2>
+                <div class="meals">
+                    <!-- Meals will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Customization Modal -->
+        <div id="customization-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Customize Your Order</h2>
+                <div id="customization-options"></div>
+                <div class="modal-buttons">
+                    <button id="cancel-customization">Cancel</button>
+                    <button id="confirm-customization">Add to Order</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-list">
+            <h2>Current Orders</h2>
+            <div id="orders-container">
+                <!-- Orders will be displayed here -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="clear-orders">Clear All Orders</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
