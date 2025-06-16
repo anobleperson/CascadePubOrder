@@ -66,8 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
             description: 'Free Range chicken breast served crumbed or pan-fried (gf) with salad & beer battered fries, or seasonal vegetables & your choice of sauce'
         },
         'Bowl of chips': {
-            type: 'single',
-            variations: [],
+            type: 'multi',
+            variations: [
+                { name: 'Size', options: ['Small', 'Large'] },
+                { name: 'Sauce', options: ['Gravy', 'Mushroom', 'Pepper', 'Aioli'] }
+            ],
             description: 'Bowl of beer battered chips'
         },
         'Choc fudge Brownie': {
